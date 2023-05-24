@@ -3,21 +3,22 @@ import hashlib
 import json
 from flask import Flask, request
 
-from weiboSDK import CallbackSDK
+from weiboSDK import FansMessage 
 
-# set app_secret of your WEIBO application. See http://api.weibo.com
-app_secret = "5fda2753c4af0e8c02fdb8afb92a8f0c"
+# set app_secret of your WEIBO application. See https://open.weibo.com/
+# You will get the app_secret after creating your application on https://open.weibo.com/apps
+app_secret = ""
 
 # Initialize  weiboSDK
-call_back_SDK = CallbackSDK()
-call_back_SDK.setAppSecret(app_secret)
+fans_message = FansMessage()
+fans_message.setAppSecret(app_secret)
 
 # Verify the signature of a message posted by WEIBO
 def verify():
     signature = request.args.get("signature")
     timestamp = request.args.get("timestamp")
     nonce = request.args.get("nonce")
-    if not call_back_SDK.checkSignature(signature, timestamp, nonce):
+    if not fans_message.checkSignature(signature, timestamp, nonce):
         return "check signature error"
 
     # For the first URL verification, the message contains a "echostr" keyword.
@@ -26,7 +27,7 @@ def verify():
         return request.args.get("echostr")
 
     # Process the WEIBO message posted by WEIBO server.
-    post_msg_str = call_back_SDK.getPostMsgStr()
+    post_msg_str = fans_message.getPostMsgStr()
 
     # Set the return string to empty
     # Note that the WEIBO server require UTF8 encode.
@@ -45,7 +46,7 @@ def verify():
         # There are multiple message type.
         # For "text" message example
         data_type = "text"
-        data = call_back_SDK.textData("真不错啊！好看！")
+        data = fans_message.textData("真不错啊！好看！")
 
         # For articles message:
         # data_type = "articles"
@@ -63,14 +64,14 @@ def verify():
         #         "url": "http://e.weibo.com/mediaprofile/article/detail?uid=1722052204&aid=983319"
         #     }
         # ]
-        # data = call_back_SDK.articleData(article_data)
+        # data = fans_message.articleData(article_data)
 
         # For position message:
         # data_type = "position"
         # longitude = "123.01"
         # latitude = "154.2"
-        # data = call_back_SDK.positionData(longitude, latitude)
+        # data = fans_message.positionData(longitude, latitude)
         
-        str_return = call_back_SDK.buildReplyMsg(receiver_id, sender_id, data, data_type)
+        str_return = fans_message.buildReplyMsg(receiver_id, sender_id, data, data_type)
 
     return json.dumps(str_return)

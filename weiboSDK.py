@@ -3,11 +3,12 @@ import hashlib
 import urllib.parse
 from flask import request
 
-class CallbackSDK:
+# Documents: https://open.weibo.com/wiki/%E6%8E%A5%E6%94%B6%E6%99%AE%E9%80%9A%E6%B6%88%E6%81%AF
+class FansMessage:
     def __init__(self):
         self.app_secret = "" # store app_secret
 
-    # set your app_secret, see http://api.weibo.com
+    # set your app_secret, see https://open.weibo.com/
     def setAppSecret(self, app_secret):
         self.app_secret = app_secret
 
@@ -18,7 +19,7 @@ class CallbackSDK:
 
     # Verify the server signature
     # Generate a SHA1 Hash by the combination of "app_secret, timestamp and nonce", and compare the Hash value to signature.
-    # See Documents of http://api.weibo.com
+    # See Documents of https://open.weibo.com/
     def checkSignature(self, signature, timestamp, nonce):
         tmpArr = [self.app_secret, timestamp, nonce]
         tmpArr.sort()
